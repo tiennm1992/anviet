@@ -10,4 +10,16 @@ class Customer extends AppModel {
 
     public $useTable = 'customers';
 
+    public function check_exist_user($username) {
+        $check_user = $this->find('all', array(
+            'conditions' => array(
+                'username' => $username
+            )
+        ));
+        if ($check_user) {
+            return 1;
+        }
+        return 0;
+    }
+
 }

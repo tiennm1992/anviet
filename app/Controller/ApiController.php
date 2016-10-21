@@ -10,15 +10,35 @@ App::uses('AppController', 'Controller');
  */
 class ApiController extends AppController {
 
+    public $uses = array('Customer');
+
     public function beforeFilter() {
         $this->Auth->allow();
         $this->check_login();
     }
 
     public function register() {
-        $params=  $this->request->data;
-        
-        
+        $params = $this->request->data;
+        if (!empty($params['username']) || !empty($params['password'])) {
+            $this->response(array(), true, 'Thiếu một số biến: username, password');
+        }
+        $check_exist_user = $this->Customer->check_exist_user($params['username']);
+        if ($check_exist_user) {
+            $this->response(array(), true, 'Tài khoản đã tồn tại trong hệ thống');
+        }
+        $user_data = array(
+            'username' => $params['username'],
+            'password' => $params['password'],
+            'email' => isset($params['email']) ? $params['email'] : '',
+            'phone' => isset($params['phone']) ? $params['phone'] : '',
+            'address' => isset($params['address']) ? $params['address'] : '',
+        );
+        if (!$this->Customer->save($user_data)) {
+            $this->response(array(), true, 'Lỗi lưu dữ liệu của hệ thống');
+        } else {
+            $user_data = $this->Customer->findById($this->Trip->getInsertID());
+            $this->response($user_data, FALSE, '');
+        }
     }
 
     public function login() {
