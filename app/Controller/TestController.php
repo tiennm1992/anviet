@@ -12,8 +12,42 @@ class TestController extends AppController {
     public function beforeFilter() {
         $this->Auth->allow();
     }
+
     public function a() {
-        phpinfo();die;
+        $this->autoLayout = false;
+    }
+
+    public function check() {
+        $params = array(
+            "text" => "I love you Fucking care in my nothe cdcd cdcd cdc dcd cdc dcd cdc d",
+            "language" => "en-US",
+        );
+
+        $rep= $this->httpPost("https://languagetool.org/api/v2/check", $params);
+        pr(json_decode($rep,true));
+        die;
+    }
+
+    public function httpPost($url, $params) {
+        $postData = '';
+        //create name value pairs seperated by &
+        foreach ($params as $k => $v) {
+            $postData .= $k . '=' . $v . '&';
+        }
+        $postData = rtrim($postData, '&');
+
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_POST, count($postData));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+
+        $output = curl_exec($ch);
+
+        curl_close($ch);
+        return $output;
     }
 
     public function index() {
@@ -51,7 +85,7 @@ class TestController extends AppController {
         echo '</table>';
         die;
     }
-             
+
     public function go($current_location_x, $current_location_y) {
         $this->trace_snack[] = array(
             $current_location_x => array(
@@ -117,7 +151,7 @@ class TestController extends AppController {
                 $location_tmp[] = $value;
             }
             return $location_tmp;
-        } elseif (($cond1 == 1 && $cond2 == 2 )|| $cond3 == 2) {
+        } elseif (($cond1 == 1 && $cond2 == 2 ) || $cond3 == 2) {
             $location_tmp = array();
             $location_tmp[] = array(
                 $current_location_x => array(

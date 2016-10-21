@@ -6,7 +6,6 @@ class AdminController extends AppController {
 
     public $components = array('Paginator');
     public $uses = array('Post', 'User');
-
     /**
      * index method
      *
